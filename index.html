@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Silverline City — സിൽവർലൈൻ സിറ്റി</title>
+<meta name="description" content="A transmedia universe set in dystopian Kerala, 2057. Malayalam Noir Futurism.">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+Malayalam:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0a;
+  --fg: #e0ddd8;
+  --dim: #555;
+  --red: #e81224;
+  --border: #1a1a1a;
+  --card: #111;
+  --left-w: 220px;
+  --right-w: 140px;
+  --font-title: 'Bebas Neue', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+  --font-mal: 'Noto Sans Malayalam', sans-serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-mono); overflow-x: hidden; }
+::selection { background: var(--red); color: var(--bg); }
+
+/* LAYOUT: LEFT PANEL | CONTENT | RIGHT PANEL */
+.layout {
+  display: flex; min-height: 100vh;
+}
+
+/* LEFT PANEL */
+.left-panel {
+  width: var(--left-w); min-height: 100vh;
+  position: fixed; left: 0; top: 0; bottom: 0; z-index: 50;
+  border-right: 2px solid var(--red);
+  overflow: hidden;
+}
+.left-panel img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+
+/* RIGHT PANEL */
+.right-panel {
+  width: var(--right-w); min-height: 100vh;
+  position: fixed; right: 0; top: 0; bottom: 0; z-index: 50;
+  border-left: 2px solid var(--red);
+  background: var(--bg);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  writing-mode: vertical-rl; text-orientation: mixed;
+}
+.right-text {
+  font-family: var(--font-title); font-size: 18px; letter-spacing: 6px;
+  text-transform: uppercase; color: var(--dim);
+  transform: rotate(180deg);
+}
+.right-cta {
+  font-family: var(--font-title); font-size: 16px; letter-spacing: 4px;
+  color: var(--red); text-transform: uppercase;
+  border: 2px solid var(--red); padding: 12px 8px;
+  margin-top: 40px; cursor: pointer;
+  transition: all 0.3s; transform: rotate(180deg);
+  text-decoration: none;
+}
+.right-cta:hover { background: var(--red); color: var(--bg); }
+.right-dots {
+  display: flex; flex-direction: column; gap: 6px;
+  margin-top: 40px; transform: rotate(180deg);
+}
+.right-dots span {
+  width: 4px; height: 4px; background: var(--red); border-radius: 50%;
+}
+
+/* CENTER CONTENT */
+.center {
+  margin-left: var(--left-w); margin-right: var(--right-w);
+  flex: 1; min-height: 100vh;
+}
+
+/* TOP NAV */
+.top-nav {
+  position: sticky; top: 0; z-index: 40;
+  padding: 16px 24px;
+  display: flex; justify-content: center; gap: 32px;
+  background: rgba(10,10,10,0.92); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-link {
+  font-family: var(--font-title); font-size: 15px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--dim);
+  text-decoration: none; cursor: pointer;
+  transition: color 0.2s; position: relative;
+}
+.nav-link:hover, .nav-link.active { color: var(--fg); }
+.nav-link.active::after {
+  content: ''; position: absolute; bottom: -4px; left: 0; right: 0;
+  height: 2px; background: var(--red);
+}
+
+/* MASONRY GRID */
+.grid-section { padding: 16px; }
+.masonry { columns: 3; column-gap: 10px; }
+
+.grid-item {
+  break-inside: avoid; margin-bottom: 10px;
+  overflow: hidden; position: relative;
+  background: var(--card); cursor: pointer;
+  transition: transform 0.3s ease;
+}
+.grid-item:hover { transform: scale(1.008); }
+.grid-item:hover .grid-overlay { opacity: 1; }
+
+.grid-item .thumb {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.grid-item.r-16-9 { aspect-ratio: 16/9; }
+.grid-item.r-1-1 { aspect-ratio: 1/1; }
+.grid-item.r-9-16 { aspect-ratio: 9/16; }
+.grid-item.r-3-1 { aspect-ratio: 3/1; }
+.grid-item.r-4-5 { aspect-ratio: 4/5; }
+.grid-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.play-btn {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 52px; height: 52px; border-radius: 50%;
+  background: rgba(0,0,0,0.55); border: 2px solid rgba(255,255,255,0.25);
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none; transition: all 0.3s;
+}
+.grid-item:hover .play-btn { background: rgba(232,18,36,0.8); border-color: var(--red); }
+.play-btn::after {
+  content: ''; width: 0; height: 0;
+  border-style: solid; border-width: 9px 0 9px 16px;
+  border-color: transparent transparent transparent rgba(255,255,255,0.9);
+  margin-left: 3px;
+}
+
+.grid-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(10,10,10,0.85) 0%, transparent 50%);
+  opacity: 0; transition: opacity 0.3s;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 12px;
+}
+.grid-overlay .item-title {
+  font-family: var(--font-title); font-size: 15px; letter-spacing: 1px; text-transform: uppercase;
+}
+.grid-overlay .item-tag {
+  font-size: 10px; color: var(--red); font-family: var(--font-mono);
+  text-transform: uppercase; letter-spacing: 1px; margin-top: 3px;
+}
+
+/* LIGHTBOX */
+.lightbox {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(5,5,5,0.96); backdrop-filter: blur(20px);
+  display: none; align-items: center; justify-content: center;
+}
+.lightbox.open { display: flex; }
+.lightbox-close {
+  position: absolute; top: 20px; right: 24px;
+  background: none; border: none; color: var(--dim); font-size: 28px;
+  cursor: pointer; font-family: var(--font-mono); transition: color 0.2s;
+}
+.lightbox-close:hover { color: var(--fg); }
+.lightbox-content img { max-width: 90vw; max-height: 85vh; object-fit: contain; }
+.lightbox-content iframe { width: 75vw; height: 42vw; max-height: 80vh; border: none; }
+
+/* GRAIN + SCANLINES */
+body::after {
+  content: ''; position: fixed; inset: 0; z-index: 9999;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+  pointer-events: none;
+}
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: 9998; opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+/* ANIMATIONS */
+@keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+.grid-item { animation: fadeUp 0.5s ease both; animation-play-state: paused; }
+
+/* MOBILE */
+@media (max-width: 1100px) {
+  .left-panel { width: 160px; } .right-panel { width: 100px; }
+  .center { margin-left: 160px; margin-right: 100px; }
+  .masonry { columns: 2; }
+}
+@media (max-width: 768px) {
+  .left-panel { display: none; } .right-panel { display: none; }
+  .center { margin-left: 0; margin-right: 0; }
+  .masonry { columns: 2; column-gap: 6px; }
+  .grid-item { margin-bottom: 6px; }
+  .top-nav { gap: 16px; padding: 12px 16px; }
+  .nav-link { font-size: 13px; letter-spacing: 2px; }
+  .grid-section { padding: 8px; }
+}
+@media (max-width: 480px) {
+  .masonry { columns: 1; }
+}
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
+    <img src="logo_left.png" alt="Silverline City">
+  </div>
+
+  <!-- CENTER -->
+  <div class="center">
+
+    <!-- NAV -->
+    <nav class="top-nav">
+      <a class="nav-link active" onclick="filterGrid('all',this)">/ CITY</a>
+      <a class="nav-link" onclick="filterGrid('character',this)">/ CHARACTERS</a>
+      <a class="nav-link" onclick="filterGrid('film',this)">/ FILMS</a>
+      <a class="nav-link" onclick="filterGrid('bts',this)">/ TRANSMISSIONS</a>
+      <a class="nav-link" href="https://aboutblank.art" target="_blank">/ ABOUT:BLANK</a>
+    </nav>
+
+    <!-- GRID -->
+    <section class="grid-section">
+      <div class="masonry" id="masonry">
+
+        <!-- ROW 1: wide + vertical -->
+        <div class="grid-item r-16-9" data-type="film" onclick="openLB('video','YOUTUBE_EMBED_URL')">
+          <div class="thumb" style="background:linear-gradient(135deg,#1a0a0a,#0a0a1a);display:flex;align-items:center;justify-content:center">
+            <span style="font-family:var(--font-title);font-size:22px;color:var(--dim);letter-spacing:3px">KARIDINAM — TRAILER</span>
+          </div>
+          <div class="play-btn"></div>
+          <div class="grid-overlay"><span class="item-title">Karidinam Trailer</span><span class="item-tag">Film</span></div>
+        </div>
+
+        <div class="grid-item r-9-16" data-type="world" onclick="openLB('image','')">
+          <div class="thumb" style="background:linear-gradient(180deg,#0a1a2a,#0a0a0a);display:flex;align-items:flex-end;justify-content:center;padding-bottom:20px">
+            <span style="font-family:var(--font-mal);font-size:18px;color:var(--dim)">കൊച്ചി 2057</span>
+          </div>
+          <div class="grid-overlay"><span class="item-title">Kochi 2057</span><span class="item-tag">World</span></div>
+        </div>
+
+        <!-- ROW 2 -->
+        <div class="grid-item r-4-5" data-type="character" onclick="openLB('image','')">
+          <div class="thumb" style="background:linear-gradient(135deg,#2a1a1a,#1a0a0a);display:flex;align-items:center;justify-content:center">
+            <span style="font-family:var(--font-title);font-size:36px;color:var(--red)">ROB</span>
+          </div>
+          <div class="grid-overlay"><span class="item-title">Robert — Unit 01</span><span class="item-tag">Character</span></div>
+        </div>
+
+        <div class="grid-item r-1-1" data-type="film" onclick="openLB('video','YOUTUBE_EMBED_URL')">
+          <div class="thumb" style="background:#181218;display:flex;align-items:center;justify-content:center">
+            <span style="font-family:var(--font-mal);font-size:16px;color:var(--fg)">കുഞ്ഞിക്കണ്ണൻ</span>
+          </div>
+          <div class="play-btn"></div>
+          <div class="grid-overlay"><span class="item-title">Kunjikannan Scene</span><span class="item-tag">Film</span></div>
+        </div>
+
+        <div class="grid-item r-16-9" data-type="bts" onclick="openLB('video','YOUTUBE_EMBED_URL')">
+          <div class="thumb" style="background:#151518;display:flex;align-items:center;justify-content:center">
+            <span style="font-family:var(--font-mono);font-size:12px;color:var(--dim);letter-spacing:1px">MAKING OF — SOUND DESIGN</span>
+          </div>
+          <div class="play-btn"></div>
+          <div class="grid-overlay"><span class="item-title">Behind the Sound</span><span class="item-tag">Transmissions</span></div>
+        </div>
+
+        <div class="grid-item r-1-1" data-type="character" onclick="openLB('image','')">
+          <div class="thumb" style="background:linear-gradient(135deg,#1a1a2a,#0a0a1a);display:flex;align-items:center;justify-content:center">
+            <span style="font-family:var(--font-title);font-size:28px;color:var(--fg)">KUNJIKANNAN</span>
+          </div>
+          <div class="grid-overlay"><span class="item-title">The Madman</span><span class="item-tag">Character</span></div>
+        </div>
+
+        <div class="grid-item r-3-1" data-type="world" onclick="openLB('image','')">
+          <div class="thumb" style="background:linear-gradient(90deg,#0a0a0a,#1a0a0a,#0a0a0a);display:flex;align-items:center;justify-content:center">
+            <span style="font-family:var(--font-title);font-size:22px;letter-spacing:8px;color:var(--red)">BLACK SMOKE</span>
+          </div>
+          <div class="grid-overlay"><span class="item-title">Nanotechnology</span><span class="item-tag">World</span></div>
+        </div>
+
+        <div class="grid-item r-1-1" data-type="bts" onclick="openLB('image','')">
+          <div class="thumb" style="background:linear-gradient(135deg,#1a1a0a,#0a0a0a);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px">
+            <span style="font-family:var(--font-mono);font-size:10px;color:var(--dim);letter-spacing:2px">PROMPT ITERATION</span>
+            <span style="font-family:var(--font-title);font-size:40px;color:var(--red)">#47</span>
+          </div>
+          <div class="grid-overlay"><span class="item-title">Midjourney Process</span><span class="item-tag">Transmissions</span></div>
+        </div>
+
+        <div class="grid-item r-16-9" data-type="world" onclick="openLB('image','')">
+          <div class="thumb" style="background:linear-gradient(135deg,#0a1a1a,#0a0a0a);display:flex;align-items:center;justify-content:center">
+            <span style="font-family:var(--font-title);font-size:20px;letter-spacing:4px;color:var(--dim)">VYPEEN ISLAND</span>
+          </div>
+          <div class="grid-overlay"><span class="item-title">Sabu's Hideout</span><span class="item-tag">World</span></div>
+        </div>
+
+        <div class="grid-item r-4-5" data-type="character" onclick="openLB('image','')">
+          <div class="thumb" style="background:linear-gradient(135deg,#1a1a0a,#0a0a0a);display:flex;align-items:center;justify-content:center">
+            <span style="font-family:var(--font-title);font-size:28px;color:var(--dim)">SABU</span>
+          </div>
+          <div class="grid-overlay"><span class="item-title">The Inventor</span><span class="item-tag">Character</span></div>
+        </div>
+
+        <div class="grid-item r-1-1" data-type="film" onclick="openLB('video','YOUTUBE_EMBED_URL')">
+          <div class="thumb" style="background:#12121a;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px">
+            <span style="font-family:var(--font-title);font-size:14px;letter-spacing:4px;color:var(--red)">INTRODUCING</span>
+            <span style="font-family:var(--font-title);font-size:32px;color:var(--fg)">ROBERT</span>
+          </div>
+          <div class="play-btn"></div>
+          <div class="grid-overlay"><span class="item-title">Rob — Reveal</span><span class="item-tag">Film</span></div>
+        </div>
+
+        <div class="grid-item r-16-9" data-type="film" onclick="openLB('video','YOUTUBE_EMBED_URL')">
+          <div class="thumb" style="background:#181012;display:flex;align-items:center;justify-content:center">
+            <span style="font-family:var(--font-mal);font-size:20px;color:var(--fg)">കരിദിനം — ടീസർ</span>
+          </div>
+          <div class="play-btn"></div>
+          <div class="grid-overlay"><span class="item-title">Karidinam Teaser</span><span class="item-tag">Film</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer style="padding:32px 24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:11px;color:var(--dim)">
+      <span style="font-family:var(--font-title);font-size:13px;letter-spacing:2px">SILVERLINE CITY · സിൽവർലൈൻ സിറ്റി</span>
+      <span>by <a href="https://aboutblank.art" style="color:var(--red);text-decoration:none">about:blank</a></span>
+    </footer>
+
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+    <span class="right-text">SILVERLINE.CITY</span>
+    <div class="right-dots"><span></span><span></span><span></span><span></span><span></span></div>
+    <a class="right-cta" href="#" onclick="return false">// COMING SOON</a>
+  </div>
+
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLB(event)">
+  <button class="lightbox-close" onclick="closeLB()">✕</button>
+  <div class="lightbox-content" id="lbContent"></div>
+</div>
+
+<script>
+function filterGrid(type, el) {
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  if (el) el.classList.add('active');
+  document.querySelectorAll('.grid-item').forEach(item => {
+    item.style.display = (type === 'all' || item.dataset.type === type) ? '' : 'none';
+  });
+}
+
+function openLB(type, src) {
+  const lb = document.getElementById('lightbox');
+  const c = document.getElementById('lbContent');
+  if (type === 'video' && src && !src.includes('YOUTUBE')) {
+    c.innerHTML = `<iframe src="${src}?autoplay=1" allowfullscreen allow="autoplay"></iframe>`;
+  } else if (type === 'image' && src) {
+    c.innerHTML = `<img src="${src}" alt="">`;
+  } else {
+    c.innerHTML = `<div style="padding:40px;text-align:center;color:var(--dim);font-family:var(--font-mono);font-size:13px;letter-spacing:1px">REPLACE WITH REAL CONTENT</div>`;
+  }
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLB(e) {
+  if (e && e.target !== document.getElementById('lightbox') && !e.target.classList.contains('lightbox-close')) return;
+  document.getElementById('lightbox').classList.remove('open');
+  document.getElementById('lbContent').innerHTML = '';
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLB(); });
+
+// Scroll-triggered fade in
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.style.animationPlayState = 'running'; obs.unobserve(e.target); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.grid-item').forEach((item, i) => {
+  item.style.animationDelay = (i * 0.06) + 's';
+  obs.observe(item);
+});
+</script>
+</body>
+</html>
